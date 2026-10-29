@@ -1,0 +1,111 @@
+from pathlib import Path
+import os
+
+from faster_whisper import WhisperModel
+
+# https://huggingface.co/openai/whisper-large-v3
+
+BASE_DIR = Path(__file__).resolve().parent
+INPUT_DIR = BASE_DIR / "input"
+OUTPUT_DIR = BASE_DIR / "output"
+
+MODEL_NAME = "large-v3"
+LANGUAGE = "it"
+VIDEO_EXTENSION = ".mp4"
+DEVICE = os.getenv("WHISPER_DEVICE", "cuda")
+COMPUTE_TYPE = os.getenv(
+    "WHISPER_COMPUTE_TYPE",
+    "float16" if DEVICE == "cuda" else "int8",
+)
+
+
+def format_timestamp(seconds: float) -> str:
+    """Return a timestamp in HH:MM:SS.ss format."""
+    total_seconds = int(seconds)
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, whole_seconds = divmod(remainder, 60)
+    centiseconds = int((seconds - total_seconds) * 100)
+    return f"{hours:02}:{minutes:02}:{whole_seconds:02}.{centiseconds:02}"
+
+
+def transcribe_file(model: WhisperModel, video_path: Path) -> str:
+    """Transcribe one video and return its timestamped text."""
+    segments, _ = model.transcribe(
+        str(video_path),
+        language=LANGUAGE,
+        task="transcribe",
+        beam_size=5,
+        temperature=0.0,
+        condition_on_previous_text=False,
+        vad_filter=True,
+        word_timestamps=False,
+    )
+
+    lines = []
+    for segment in segments:
+        text = segment.text.strip()
+        if text:
+            start = format_timestamp(segment.start)
+            end = format_timestamp(segment.end)
+            lines.append(f"[{start} - {end}] {text}")
+
+    return "\n".join(lines)
+
+
+def load_model() -> WhisperModel:
+    """Load Whisper Large-v3, falling back to CPU when CUDA is unavailable."""
+    print(f"Loading Whisper model {MODEL_NAME} on {DEVICE}...")
+    try:
+        return WhisperModel(
+            MODEL_NAME,
+            device=DEVICE,
+            compute_type=COMPUTE_TYPE,
+        )
+    except RuntimeError as error:
+        if DEVICE != "cuda":
+            raise
+
+        print(f"CUDA model loading failed: {error}")
+        print("Retrying with the CPU configuration.")
+        return WhisperModel(
+            MODEL_NAME,
+            device="cpu",
+            compute_type="int8",
+        )
+
+
+def main() -> None:
+    INPUT_DIR.mkdir(parents=True, exist_ok=True)
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    video_files = sorted(
+        path
+        for path in INPUT_DIR.iterdir()
+        if path.is_file() and path.suffix.lower() == VIDEO_EXTENSION
+    )
+
+    if not video_files:
+        print(f"No {VIDEO_EXTENSION} video files found in {INPUT_DIR}.")
+        return
+
+    model = load_model()
+
+    for index, video_path in enumerate(video_files, start=1):
+        output_path = OUTPUT_DIR / f"{video_path.stem}.txt"
+        if output_path.exists():
+            print(
+                f"[{index}/{len(video_files)}] Skipping {video_path.name}: "
+                f"{output_path.name} already exists."
+            )
+            continue
+
+        print(f"[{index}/{len(video_files)}] Transcribing {video_path.name}...")
+        transcription = transcribe_file(model, video_path)
+        output_path.write_text(transcription + "\n", encoding="utf-8")
+        print(f"Saved {output_path.name}.")
+
+    print("Transcription completed.")
+
+
+if __name__ == "__main__":
+    main()

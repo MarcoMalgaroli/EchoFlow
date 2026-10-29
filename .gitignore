@@ -1,0 +1,43 @@
+# === Multimedia files ===
+# exclude all .mp4 video files
+*.mp4
+
+# === Python ===
+__pycache__/
+
+# Distribution and packkages
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# === Ambienti Virtuali (Virtual Environments) ===
+# Esclude le cartelle più comuni per gli ambienti virtuali
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
+# === Configurazioni e segreti ===
+# File di configurazione locale o variabili d'ambiente con dati sensibili
+.env
+.env.local
+
+# === OS (Sistemi operativi) ===
+.DS_Store
+Thumbs.db

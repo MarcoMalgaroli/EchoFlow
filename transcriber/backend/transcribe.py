@@ -5,9 +5,9 @@ from faster_whisper import WhisperModel
 
 # https://huggingface.co/openai/whisper-large-v3
 
-BASE_DIR = Path(__file__).resolve().parent
-INPUT_DIR = BASE_DIR / "input"
-OUTPUT_DIR = BASE_DIR / "output"
+PROJECT_DIR = Path(__file__).resolve().parents[2]
+INPUT_DIR = PROJECT_DIR / "input"
+OUTPUT_DIR = PROJECT_DIR / "output"
 
 MODEL_NAME = "large-v3"
 LANGUAGE = "it"
@@ -52,6 +52,20 @@ def transcribe_file(model: WhisperModel, video_path: Path) -> str:
     return "\n".join(lines)
 
 
+def output_path_for(video_path: Path) -> Path:
+    """Return the mirrored output path for a video inside INPUT_DIR."""
+    relative_path = video_path.resolve().relative_to(INPUT_DIR.resolve())
+    return (OUTPUT_DIR / relative_path).with_suffix(".txt")
+
+
+def transcribe_and_save(model: WhisperModel, video_path: Path) -> Path:
+    """Transcribe a video and save its text in the mirrored output tree."""
+    output_path = output_path_for(video_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(transcribe_file(model, video_path) + "\n", encoding="utf-8")
+    return output_path
+
+
 def load_model() -> WhisperModel:
     """Load Whisper Large-v3, falling back to CPU when CUDA is unavailable."""
     print(f"Loading Whisper model {MODEL_NAME} on {DEVICE}...")
@@ -80,7 +94,7 @@ def main() -> None:
 
     video_files = sorted(
         path
-        for path in INPUT_DIR.iterdir()
+        for path in INPUT_DIR.rglob("*")
         if path.is_file() and path.suffix.lower() == VIDEO_EXTENSION
     )
 
@@ -91,7 +105,7 @@ def main() -> None:
     model = load_model()
 
     for index, video_path in enumerate(video_files, start=1):
-        output_path = OUTPUT_DIR / f"{video_path.stem}.txt"
+        output_path = output_path_for(video_path)
         if output_path.exists():
             print(
                 f"[{index}/{len(video_files)}] Skipping {video_path.name}: "
@@ -100,8 +114,7 @@ def main() -> None:
             continue
 
         print(f"[{index}/{len(video_files)}] Transcribing {video_path.name}...")
-        transcription = transcribe_file(model, video_path)
-        output_path.write_text(transcription + "\n", encoding="utf-8")
+        transcribe_and_save(model, video_path)
         print(f"Saved {output_path.name}.")
 
     print("Transcription completed.")

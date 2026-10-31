@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Transcriptions - Videolesson Transcriber</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container"><a class="navbar-brand" href="/">Videolesson Transcriber</a><a class="btn btn-outline-light" href="/">Videos</a></div>
+    </nav>
+    <main class="container">
+        <h1 class="h3 mb-3">Transcriptions</h1>
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="transcription-tree" class="list-group"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 id="file-title" class="h5">Select a transcription</h2>
+                        <pre id="file-content" class="mb-0 text-wrap"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/static/scripts/transcriptions.js"></script>
+</body>
+
+</html>

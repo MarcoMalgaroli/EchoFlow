@@ -27,6 +27,9 @@ function renderTree(nodes, parent = treeContainer, prefix = "") {
 
 async function loadTree() {
     const response = await fetch("/api/tree");
+    if (!response.ok) throw new Error("Unable to load videos.");
+
+    treeContainer.replaceChildren();
     renderTree(await response.json());
 }
 

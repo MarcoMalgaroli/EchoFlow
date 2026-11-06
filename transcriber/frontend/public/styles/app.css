@@ -1,0 +1,69 @@
+:root {
+    color-scheme: dark;
+    --tree-border: #334155;
+    --tree-hover: #1e293b;
+    --tree-surface: #111827;
+}
+
+body {
+    background: #0f172a !important;
+    color: #e2e8f0;
+}
+
+.card,
+.list-group-item,
+.form-control {
+    background: var(--tree-surface);
+    border-color: var(--tree-border);
+    color: #e2e8f0;
+}
+
+.tree {
+    border: 1px solid var(--tree-border);
+    border-radius: .75rem;
+    overflow: hidden;
+}
+
+.tree details {
+    border-bottom: 1px solid var(--tree-border);
+}
+
+.tree details:last-child {
+    border-bottom: 0;
+}
+
+.tree summary {
+    cursor: pointer;
+    padding: .7rem 1rem;
+    font-weight: 600;
+    list-style-position: inside;
+}
+
+.tree summary:hover,
+.tree .list-group-item:hover {
+    background: var(--tree-hover);
+}
+
+.tree details > .tree-children {
+    margin-left: 1.25rem;
+    border-left: 1px solid var(--tree-border);
+}
+
+.tree .list-group-item {
+    padding: .55rem 1rem;
+}
+
+#transcription-tree {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#file-content {
+    min-height: 60vh;
+    max-height: 70vh;
+    overflow: auto;
+    padding: 1rem;
+    border-radius: .5rem;
+    background: #020617;
+    color: #cbd5e1;
+}

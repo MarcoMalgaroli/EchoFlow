@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
+import sysconfig
 
-from faster_whisper import WhisperModel
 
 # https://huggingface.co/openai/whisper-large-v3
 
@@ -18,6 +18,24 @@ COMPUTE_TYPE = os.getenv(
     "float16" if DEVICE == "cuda" else "int8",
 )
 
+_dll_directory_handles = []
+
+if DEVICE == "cuda" and os.name == "nt":
+    print("Loading NVIDIA DLL libraries...")
+    site_packages = Path(sysconfig.get_paths()["purelib"])
+
+    dll_dirs = [
+        site_packages / "nvidia" / "cublas" / "bin",
+        site_packages / "nvidia" / "cudnn" / "bin",
+    ]
+    for dll_dir in dll_dirs:
+        if dll_dir.exists():
+            _dll_directory_handles.append(
+                os.add_dll_directory(str(dll_dir))
+            )
+    print("NVIDIA DLL libraries loaded.")
+
+from faster_whisper import WhisperModel
 
 def format_timestamp(seconds: float) -> str:
     """Return a timestamp in HH:MM:SS.ss format."""
@@ -68,9 +86,9 @@ def transcribe_and_save(model: WhisperModel, video_path: Path) -> Path:
 
 def load_model() -> WhisperModel:
     """Load Whisper Large-v3, falling back to CPU when CUDA is unavailable."""
-    print(f"Loading Whisper model {MODEL_NAME} on {DEVICE}...")
+    print(f"Loading Whisper model {MODEL_NAME} on {DEVICE.upper()} using {COMPUTE_TYPE}...")
     try:
-        return WhisperModel(
+        model = WhisperModel(
             MODEL_NAME,
             device=DEVICE,
             compute_type=COMPUTE_TYPE,
@@ -81,11 +99,14 @@ def load_model() -> WhisperModel:
 
         print(f"CUDA model loading failed: {error}")
         print("Retrying with the CPU configuration.")
-        return WhisperModel(
+        model = WhisperModel(
             MODEL_NAME,
             device="cpu",
             compute_type="int8",
         )
+    
+    print("Whisper model loaded successfully.")
+    return model
 
 
 def main() -> None:

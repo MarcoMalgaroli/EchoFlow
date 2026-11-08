@@ -3,17 +3,22 @@ const title = document.querySelector("#file-title");
 const content = document.querySelector("#file-content");
 
 function renderTree(nodes, parent = treeContainer) {
-    nodes.forEach((node) => {
+    nodes.forEach((node, index) => {
+        const branch = index === nodes.length - 1 ? "└── " : "├── ";
         if (node.type === "folder") {
             const details = document.createElement("details");
-            details.className = "list-group-item";
-            details.innerHTML = `<summary class="fw-semibold">${node.name}</summary>`;
-            renderTree(node.children, details);
+            const summary = document.createElement("summary");
+            summary.innerHTML = `<span class="tree-branch">${branch}</span><span class="tree-folder-icon">▰</span><span>${node.name}</span>`;
+            details.append(summary);
+            const children = document.createElement("div");
+            children.className = "tree-children";
+            renderTree(node.children, children);
+            details.append(children);
             parent.append(details);
         } else {
             const button = document.createElement("button");
-            button.className = "list-group-item list-group-item-action text-start text-break";
-            button.textContent = node.path;
+            button.className = "tree-file";
+            button.innerHTML = `<span class="tree-branch">${branch}</span><span class="tree-file-icon">▱</span><span class="tree-file-name">${node.name}</span>`;
             button.addEventListener("click", () => loadFile(node.path));
             parent.append(button);
         }

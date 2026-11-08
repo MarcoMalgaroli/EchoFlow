@@ -9,23 +9,31 @@
     <link rel="stylesheet" href="/static/styles/app.css">
 </head>
 
-<body class="bg-light">
-    <nav class="navbar navbar-dark bg-dark mb-4">
-        <div class="container"><a class="navbar-brand" href="/">Videolesson Transcriber</a><a class="btn btn-outline-light" href="/transcriptions">Transcriptions</a></div>
+<body>
+    <nav class="navbar app-nav">
+        <div class="container app-nav-inner">
+            <a class="navbar-brand" href="/"><span class="brand-mark">›_</span><span>Videolesson <strong>Transcriber</strong></span></a>
+            <a class="nav-link" href="/transcriptions">Transcriptions <span class="nav-arrow">↗</span></a>
+        </div>
     </nav>
-    <main class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="h3 mb-0">Video lessons</h1>
-            <button id="queue-button" class="btn btn-primary" type="button">Queue selected</button>
+    <main class="container app-shell">
+        <div class="page-heading">
+            <div>
+                <p class="eyebrow">MEDIA LIBRARY</p>
+                <h1>Video lessons</h1>
+                <p class="page-description">Browse your lesson archive and queue videos for transcription.</p>
+            </div>
+            <button id="queue-button" class="btn btn-primary" type="button"><span>+</span> Queue selected</button>
         </div>
         <div id="message" class="alert d-none" role="alert"></div>
-        <div class="card">
-            <div class="card-body">
-                <div id="folder-tree" class="tree"></div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">Input /</span><span class="panel-hint">select videos to process</span></div>
+            <div class="panel-body">
+                <div id="folder-tree" class="tree" aria-label="Video folder tree"></div>
             </div>
         </div>
-        <section class="mt-4">
-            <h2 class="h5">Queue status</h2>
+        <section class="queue-section">
+            <div class="section-heading"><h2>Queue status</h2><span class="live-dot">LIVE</span></div>
             <div id="jobs" class="list-group"></div>
         </section>
     </main>

@@ -8,18 +8,23 @@ function showMessage(text, kind = "success") {
 }
 
 function renderTree(nodes, parent = treeContainer, prefix = "") {
-    nodes.forEach((node) => {
+    nodes.forEach((node, index) => {
+        const branch = index === nodes.length - 1 ? "└── " : "├── ";
         const path = prefix ? `${prefix}/${node.name}` : node.name;
         if (node.type === "folder") {
             const details = document.createElement("details");
-            details.className = "list-group-item";
-            details.innerHTML = `<summary class="fw-semibold">${node.name}</summary>`;
-            renderTree(node.children, details, path);
+            const summary = document.createElement("summary");
+            summary.innerHTML = `<span class="tree-branch">${branch}</span><span class="tree-folder-icon">▰</span><span>${node.name}</span>`;
+            details.append(summary);
+            const children = document.createElement("div");
+            children.className = "tree-children";
+            renderTree(node.children, children, path);
+            details.append(children);
             parent.append(details);
         } else {
             const label = document.createElement("label");
-            label.className = "list-group-item d-flex gap-2 align-items-center";
-            label.innerHTML = `<input class="form-check-input video-check" type="checkbox" value="${node.path}" ${node.status === "completed" ? "disabled" : ""}><span class="text-break">${node.name}</span><span class="badge text-bg-secondary ms-auto">${node.status}</span>`;
+            label.className = "tree-file";
+            label.innerHTML = `<span class="tree-branch">${branch}</span><input class="video-check" type="checkbox" value="${node.path}" ${node.status === "completed" ? "disabled" : ""}><span class="tree-file-icon">▱</span><span class="tree-file-name">${node.name}</span><span class="tree-status ${node.status}">${node.status}</span>`;
             parent.append(label);
         }
     });

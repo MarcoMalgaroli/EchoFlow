@@ -9,24 +9,34 @@
     <link rel="stylesheet" href="/static/styles/app.css">
 </head>
 
-<body class="bg-light">
-    <nav class="navbar navbar-dark bg-dark mb-4">
-        <div class="container"><a class="navbar-brand" href="/">Videolesson Transcriber</a><a class="btn btn-outline-light" href="/">Videos</a></div>
+<body>
+    <nav class="navbar app-nav">
+        <div class="container app-nav-inner">
+            <a class="navbar-brand" href="/"><span class="brand-mark">›_</span><span>Videolesson <strong>Transcriber</strong></span></a>
+            <a class="nav-link" href="/">Videos <span class="nav-arrow">↗</span></a>
+        </div>
     </nav>
-    <main class="container">
-        <h1 class="h3 mb-3">Transcriptions</h1>
+    <main class="container app-shell">
+        <div class="page-heading compact">
+            <div>
+                <p class="eyebrow">OUTPUT ARCHIVE</p>
+                <h1>Transcriptions</h1>
+                <p class="page-description">Open a completed lesson transcript from your archive.</p>
+            </div>
+        </div>
         <div class="row g-4">
             <div class="col-lg-5">
-                <div class="card">
-                    <div class="card-body">
-                        <div id="transcription-tree" class="tree"></div>
+                <div class="panel">
+                    <div class="panel-header"><span class="panel-title">Output /</span><span class="panel-hint">transcript files</span></div>
+                    <div class="panel-body">
+                        <div id="transcription-tree" class="tree" aria-label="Transcription folder tree"></div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-7">
-                <div class="card">
-                    <div class="card-body">
-                        <h2 id="file-title" class="h5">Select a transcription</h2>
+                <div class="panel transcript-panel">
+                    <div class="panel-header"><h2 id="file-title" class="panel-title">Select a transcription</h2></div>
+                    <div class="panel-body transcript-body">
                         <pre id="file-content" class="mb-0 text-wrap"></pre>
                     </div>
                 </div>

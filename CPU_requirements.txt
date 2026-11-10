@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+av<19
+faster-whisper

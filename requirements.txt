@@ -3,5 +3,5 @@ uvicorn
 av<19
 faster-whisper
 
-# nvidia-cublas-cu12
-# nvidia-cudnn-cu12
+nvidia-cublas-cu12
+nvidia-cudnn-cu12

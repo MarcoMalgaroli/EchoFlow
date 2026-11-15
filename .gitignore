@@ -1,6 +1,9 @@
 # === Multimedia files ===
-# exclude all .mp4 video files
+# exclude all .mp4 video files, Input and output folders
 *.mp4
+input/*
+!input/.gitkeep
+output/
 
 # === Python ===
 __pycache__/
@@ -23,8 +26,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# === Ambienti Virtuali (Virtual Environments) ===
-# Esclude le cartelle più comuni per gli ambienti virtuali
+# === Virtual Environments ===
 venv/
 .venv/
 env/
@@ -33,11 +35,11 @@ ENV/
 env.bak/
 venv.bak/
 
-# === Configurazioni e segreti ===
-# File di configurazione locale o variabili d'ambiente con dati sensibili
+# === Configuration ===
+# Local config file or sensible data
 .env
 .env.local
 
-# === OS (Sistemi operativi) ===
+# === OS ===
 .DS_Store
 Thumbs.db
